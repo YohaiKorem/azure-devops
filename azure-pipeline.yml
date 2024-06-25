@@ -42,10 +42,6 @@ steps:
     xmlstarlet ed -L -u "/Project/PropertyGroup/Version" -v "$(NewVersion)" $(pathToProjectFile)
   displayName: 'Set App Version'
 
-- script: |
-    echo "##vso[build.updatebuildnumber]$(NewVersion)"
-  displayName: 'Update Build Number'
-
 - task: DotNetCoreCLI@2
   inputs:
     command: 'restore'
