@@ -25,8 +25,12 @@ steps:
     arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory) --verbosity detailed'
     publishWebProjects: false
 
-- publish: $(System.DefaultWorkingDirectory)/HelloWorldApp
-  artifact: HelloWorldApp
+- task: NuGetCommand@2
+  inputs:
+    command: 'push'
+    packagesToPush: '$(System.DefaultWorkingDirectory)/HelloWorldApp/*.nupkg'
+    publishVstsFeed: 'HelloWorldApp'
+
 
 
 - script: echo Build and publish completed successfully.
