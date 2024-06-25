@@ -34,7 +34,7 @@ steps:
     git checkout master  
     git add version.txt
     git commit -m "Increment version to $NEW_VERSION"
-    git push origin master  # Change this to 'main' if your default branch is 'main'
+    git push origin master
     echo "##vso[task.setvariable variable=NewVersion]$NEW_VERSION"
   displayName: 'Increment Version'
 
@@ -42,8 +42,8 @@ steps:
     xmlstarlet ed -L -u "/Project/PropertyGroup/Version" -v "$(NewVersion)" $(pathToProjectFile)
   displayName: 'Set App Version'
 
-- script: cat HelloWorldApp/HelloWorldApp.csproj
-  displayName: 'diusplay App Version'
+- script: cat $(pathToProjectFile)
+  displayName: 'Display App Version'
 
 - task: DotNetCoreCLI@2
   inputs:
@@ -54,22 +54,20 @@ steps:
   inputs:
     command: 'build'
     projects: '**/*.csproj'
-    arguments: '--configuration $(BuildConfiguration) --verbosity detailed /property:Version=$(NewVersion)'
+    arguments: '--configuration $(BuildConfiguration) --verbosity detailed /p:Version=$(NewVersion) /p:AssemblyVersion=$(NewVersion) /p:FileVersion=$(NewVersion)'
 
 - task: DotNetCoreCLI@2
   inputs:
     command: 'publish'
     projects: '**/*.csproj'
-    arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory) --verbosity detailed'
+    arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory) --verbosity detailed /p:Version=$(NewVersion) /p:AssemblyVersion=$(NewVersion) /p:FileVersion=$(NewVersion)'
     publishWebProjects: false
 
 - task: NuGetCommand@2
   inputs:
     command: 'push'
-    packagesToPush: '$(System.DefaultWorkingDirectory)/HelloWorldApp/*.nupkg'
+    packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
     publishVstsFeed: 'yohaikoremoxxDD'
-
-
 
 - script: echo Build and publish completed successfully.
   displayName: 'Confirmation Message'
