@@ -12,8 +12,10 @@ variables:
   minor: 0
   patch: $[counter(variables['major'], 0)]
   build: $(Build.BuildId)
-  
+
 steps:
+- checkout: self
+  persistCredentials: true
 - script: |
     commit_message=$(git log -1 --pretty=%B)
     version_bump=$(bash commit_message_regex.sh "$commit_message")
