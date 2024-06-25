@@ -8,24 +8,26 @@ pool:
 
 steps:
 - script: |
-    echo "##vso[task.setvariable variable=Version]$(cat version.txt)"
-  displayName: 'Read Current Version'
+    commit_message=$(git log -1 --pretty=%B)
+    version_bump=$(bash commit_message_regex.sh "$commit_message")
+    if [[ $version_bump == "Error: No matching pattern" ]]; then
+        echo "##vso[task.logissue type=error]$version_bump"
+        exit 1
+    fi
+    echo "##vso[task.setvariable variable=VersionBump]$version_bump"
+  displayName: 'Determine Version Bump'
 
 - script: |
     VERSION=$(cat version.txt)
-    IFS='.' read -ra ADDR <<< "$VERSION"
-    MAJOR=${ADDR[0]}
-    MINOR=${ADDR[1]}
-    PATCH=${ADDR[2]}
-    PATCH=$((PATCH + 1))
-    NEW_VERSION="$MAJOR.$MINOR.$PATCH"
-    echo "##vso[task.setvariable variable=NewVersion]$NEW_VERSION"
+    NEW_VERSION=$(python3 increment_version.py $VERSION $(VersionBump))
     echo $NEW_VERSION > version.txt
     git config user.email "you@example.com"
     git config user.name "Your Name"
+    git checkout master  # Change this to 'main' if your default branch is 'main'
     git add version.txt
     git commit -m "Increment version to $NEW_VERSION"
-    git push origin master
+    git push origin master  # Change this to 'main' if your default branch is 'main'
+    echo "##vso[task.setvariable variable=NewVersion]$NEW_VERSION"
   displayName: 'Increment Version'
 
 - script: |
