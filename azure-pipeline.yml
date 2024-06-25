@@ -16,6 +16,7 @@ variables:
 steps:
 - checkout: self
   persistCredentials: true
+
 - script: |
     commit_message=$(git log -1 --pretty=%B)
     version_bump=$(bash commit_message_regex.sh "$commit_message")
@@ -30,16 +31,12 @@ steps:
     VERSION=$(cat version.txt)
     NEW_VERSION=$(python3 increment_version.py $VERSION $(VersionBump))
     echo $NEW_VERSION > version.txt
-    git checkout master  # Change this to 'main' if your default branch is 'main'
+    git checkout master  
     git add version.txt
     git commit -m "Increment version to $NEW_VERSION"
     git push origin master  # Change this to 'main' if your default branch is 'main'
     echo "##vso[task.setvariable variable=NewVersion]$NEW_VERSION"
   displayName: 'Increment Version'
-
-- script: |
-    echo "##vso[build.updatebuildnumber]$(NewVersion)"
-  displayName: 'Update Build Number'
 
 - task: PowerShell@2
   displayName: 'Set App Version'
