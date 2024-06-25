@@ -21,8 +21,6 @@ steps:
     VERSION=$(cat version.txt)
     NEW_VERSION=$(python3 increment_version.py $VERSION $(VersionBump))
     echo $NEW_VERSION > version.txt
-    git config user.email "you@example.com"
-    git config user.name "Your Name"
     git checkout master  # Change this to 'main' if your default branch is 'main'
     git add version.txt
     git commit -m "Increment version to $NEW_VERSION"
