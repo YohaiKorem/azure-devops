@@ -7,6 +7,30 @@ pool:
   - agent.name -equals popo
 
 steps:
+- script: |
+    echo "##vso[task.setvariable variable=Version]$(cat version.txt)"
+  displayName: 'Read Current Version'
+
+- script: |
+    VERSION=$(cat version.txt)
+    IFS='.' read -ra ADDR <<< "$VERSION"
+    MAJOR=${ADDR[0]}
+    MINOR=${ADDR[1]}
+    PATCH=${ADDR[2]}
+    PATCH=$((PATCH + 1))
+    NEW_VERSION="$MAJOR.$MINOR.$PATCH"
+    echo "##vso[task.setvariable variable=NewVersion]$NEW_VERSION"
+    echo $NEW_VERSION > version.txt
+    git config user.email "you@example.com"
+    git config user.name "Your Name"
+    git add version.txt
+    git commit -m "Increment version to $NEW_VERSION"
+    git push
+  displayName: 'Increment Version'
+
+- script: |
+    echo "##vso[build.updatebuildnumber]$(NewVersion)"
+  displayName: 'Update Build Number'
 - task: DotNetCoreCLI@2
   inputs:
     command: 'restore'
