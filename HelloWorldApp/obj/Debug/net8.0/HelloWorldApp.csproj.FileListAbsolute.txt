@@ -1,0 +1,14 @@
+/home/yohai/git-ex/devops/azure/HelloWorldApp/bin/Debug/net8.0/HelloWorldApp
+/home/yohai/git-ex/devops/azure/HelloWorldApp/bin/Debug/net8.0/HelloWorldApp.deps.json
+/home/yohai/git-ex/devops/azure/HelloWorldApp/bin/Debug/net8.0/HelloWorldApp.runtimeconfig.json
+/home/yohai/git-ex/devops/azure/HelloWorldApp/bin/Debug/net8.0/HelloWorldApp.dll
+/home/yohai/git-ex/devops/azure/HelloWorldApp/bin/Debug/net8.0/HelloWorldApp.pdb
+/home/yohai/git-ex/devops/azure/HelloWorldApp/obj/Debug/net8.0/HelloWorldApp.GeneratedMSBuildEditorConfig.editorconfig
+/home/yohai/git-ex/devops/azure/HelloWorldApp/obj/Debug/net8.0/HelloWorldApp.AssemblyInfoInputs.cache
+/home/yohai/git-ex/devops/azure/HelloWorldApp/obj/Debug/net8.0/HelloWorldApp.AssemblyInfo.cs
+/home/yohai/git-ex/devops/azure/HelloWorldApp/obj/Debug/net8.0/HelloWorldApp.csproj.CoreCompileInputs.cache
+/home/yohai/git-ex/devops/azure/HelloWorldApp/obj/Debug/net8.0/HelloWorldApp.dll
+/home/yohai/git-ex/devops/azure/HelloWorldApp/obj/Debug/net8.0/refint/HelloWorldApp.dll
+/home/yohai/git-ex/devops/azure/HelloWorldApp/obj/Debug/net8.0/HelloWorldApp.pdb
+/home/yohai/git-ex/devops/azure/HelloWorldApp/obj/Debug/net8.0/HelloWorldApp.genruntimeconfig.cache
+/home/yohai/git-ex/devops/azure/HelloWorldApp/obj/Debug/net8.0/ref/HelloWorldApp.dll
