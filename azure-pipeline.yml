@@ -6,6 +6,13 @@ pool:
   demands:
   - agent.name -equals popo
 
+variables:
+  pathToProjectFile: '$(System.DefaultWorkingDirectory)/HelloWorldApp/HelloWorldApp.csproj'
+  major: 1
+  minor: 0
+  patch: $[counter(variables['major'], 0)]
+  build: $(Build.BuildId)
+  
 steps:
 - script: |
     commit_message=$(git log -1 --pretty=%B)
