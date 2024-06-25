@@ -42,7 +42,7 @@ steps:
     xmlstarlet ed -L -u "/Project/PropertyGroup/Version" -v "$(NewVersion)" $(pathToProjectFile)
   displayName: 'Set App Version'
 
-- script: cat HelloWorldApp.csproj
+- script: cat HelloWorldApp/HelloWorldApp.csproj
   displayName: 'diusplay App Version'
 
 - task: DotNetCoreCLI@2
