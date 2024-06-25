@@ -42,6 +42,9 @@ steps:
     xmlstarlet ed -L -u "/Project/PropertyGroup/Version" -v "$(NewVersion)" $(pathToProjectFile)
   displayName: 'Set App Version'
 
+- script: cat HelloWorldApp.csproj
+  displayName: 'diusplay App Version'
+
 - task: DotNetCoreCLI@2
   inputs:
     command: 'restore'
@@ -57,7 +60,7 @@ steps:
   inputs:
     command: 'publish'
     projects: '**/*.csproj'
-    arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory) --verbosity detailed -p:Version=$(NewVersion) -p:FileVersion=$(NewVersion)'
+    arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory) --verbosity detailed'
     publishWebProjects: false
 
 - task: NuGetCommand@2
