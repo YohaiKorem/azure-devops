@@ -54,7 +54,7 @@ steps:
   inputs:
     command: 'build'
     projects: '**/*.csproj'
-    arguments: '--configuration $(BuildConfiguration) --verbosity detailed /property:Version=$(NewVersion)'
+    arguments: '--configuration $(BuildConfiguration) --verbosity detailed /property:Version=$(NewVersion) /p:AssemblyVersion=$(NewVersion)'
 
 - task: DotNetCoreCLI@2
   inputs:
