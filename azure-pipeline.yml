@@ -51,13 +51,13 @@ steps:
   inputs:
     command: 'build'
     projects: '**/*.csproj'
-    arguments: '--configuration $(BuildConfiguration) --verbosity detailed -p:Version=$(NewVersion)'
+    arguments: '--configuration $(BuildConfiguration) --verbosity detailed -p:Version=$(NewVersion) -p:FileVersion=$(NewVersion) -p:AssemblyVersion=$(NewVersion)'
 
 - task: DotNetCoreCLI@2
   inputs:
     command: 'publish'
     projects: '**/*.csproj'
-    arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory) --verbosity detailed -p:Version=$(NewVersion)'
+    arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory) --verbosity detailed -p:Version=$(NewVersion) -p:FileVersion=$(NewVersion) -p:AssemblyVersion=$(NewVersion)'
     publishWebProjects: false
 
 - task: NuGetCommand@2
