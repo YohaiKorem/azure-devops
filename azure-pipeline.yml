@@ -25,8 +25,9 @@ steps:
     arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory) --verbosity detailed'
     publishWebProjects: false
 
-- publish: $(System.DefaultWorkingDirectory)/bin/HelloWorldApp
+- publish: $(System.DefaultWorkingDirectory)/a/HelloWorldApp
   artifact: HelloWorldApp
+
 
 - script: echo Build and publish completed successfully.
   displayName: 'Confirmation Message'
