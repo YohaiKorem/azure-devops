@@ -39,11 +39,11 @@ steps:
   displayName: 'Increment Version'
 
 - script: |
-    xmlstarlet ed -L -u "/Project/PropertyGroup/Version" -v "$(NewVersion)" $(pathToProjectFile)
+    sed -i 's/<Version>.*<\/Version>/<Version>$(NewVersion)<\/Version>/' $(pathToProjectFile)
   displayName: 'Set App Version'
 
 - script: cat HelloWorldApp/HelloWorldApp.csproj
-  displayName: 'diusplay App Version'
+  displayName: 'Display App Version'
 
 - task: DotNetCoreCLI@2
   inputs:
@@ -55,6 +55,7 @@ steps:
     command: 'build'
     projects: '**/*.csproj'
     arguments: '--configuration $(BuildConfiguration) --verbosity detailed /p:Version=$(NewVersion) /p:AssemblyVersion=$(NewVersion) /p:FileVersion=$(NewVersion) /p:NuGetVersion=$(NewVersion)'
+  displayName: 'Build'
 
 - task: DotNetCoreCLI@2
   inputs:
@@ -62,12 +63,16 @@ steps:
     projects: '**/*.csproj'
     arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory) --verbosity detailed'
     publishWebProjects: false
+  displayName: 'Publish'
+  
 
 - task: NuGetCommand@2
   inputs:
     command: 'push'
     packagesToPush: '$(System.DefaultWorkingDirectory)/HelloWorldApp/*.nupkg'
     publishVstsFeed: 'yohaikoremoxxDD'
+  displayName: 'Nuget push'
+  
 
 
 
