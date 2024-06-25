@@ -31,6 +31,26 @@ steps:
 - script: |
     echo "##vso[build.updatebuildnumber]$(NewVersion)"
   displayName: 'Update Build Number'
+
+- task: PowerShell@2
+  displayName: 'Set App Version'
+  inputs:
+    targetType: 'inline'
+    script: |
+      [Reflection.Assembly]::LoadWithPartialName("System.Xml.Linq")
+      $path = "$(pathToProjectFile)"
+      $doc = [System.Xml.Linq.XDocument]::Load($path)
+      $doc
+        .Element("Project")
+        .Element("PropertyGroup")
+        .Element("Version")
+        .SetValue("$(NewVersion)");
+      $doc.Save($path)
+
+- script: |
+    echo "##vso[build.updatebuildnumber]$(NewVersion)"
+  displayName: 'Update Build Number'
+
 - task: DotNetCoreCLI@2
   inputs:
     command: 'restore'
