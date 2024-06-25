@@ -7,8 +7,6 @@ pool:
   - agent.name -equals popo
 
 steps:
-
-
 - task: DotNetCoreCLI@2
   inputs:
     command: 'restore'
@@ -25,6 +23,7 @@ steps:
     command: 'publish'
     projects: '**/*.csproj'
     arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory) --verbosity detailed'
+    publishWebProjects: false
 
 - task: PublishBuildArtifacts@1
   inputs:
