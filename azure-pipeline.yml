@@ -38,7 +38,9 @@ steps:
     echo "##vso[task.setvariable variable=NewVersion]$NEW_VERSION"
   displayName: 'Increment Version'
 
-- script: sed -i 's/<Version>.*<\/Version>/<Version>$(NewVersion)<\/Version>/' $(pathToProjectFile)
+- script: |
+    echo "$(NewVersion)"
+    sed -i 's/<Version>.*<\/Version>/<Version>$(NewVersion)<\/Version>/' $(pathToProjectFile)
   displayName: 'Set App Version'
 
 - script: cat $(pathToProjectFile)
