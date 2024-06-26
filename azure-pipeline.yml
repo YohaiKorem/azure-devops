@@ -54,14 +54,11 @@ steps:
     command: 'restore'
     projects: '**/*.csproj'
 
-- task: SonarQubePrepare@5
+- task: SonarQubePrepare@6
   inputs:
-    SonarQube: 'sonar'  
+    SonarQube: 'sonar'
     scannerMode: 'MSBuild'
-    configMode: 'manual'
-    projectKey: $(sonarQubeProjectKey)
-    projectName: 'HelloWorldApp'
-    projectVersion: $(NewVersion)
+    projectKey: 'HelloWorld'
   displayName: 'Prepare SonarQube Analysis'
 
 - task: DotNetCoreCLI@2
@@ -96,13 +93,3 @@ steps:
 - script: |
     echo "Artifact: $(Build.SourceBranchName)_$(NewVersion)"
   displayName: 'Print Artifact Name'
-
-- task: SendEmail@1
-  inputs:
-    to: 'your_email@example.com'
-    subject: 'Pipeline Status'
-    body: |
-      Pipeline completed with status: $(Build.Status)
-      Version: $(NewVersion)
-    isHtml: false
-  displayName: 'Send Email Notification'
