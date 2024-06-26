@@ -14,7 +14,7 @@ variables:
   build: $(Build.BuildId)
   buildConfiguration: 'Release'
   sonarQubeProjectKey: 'HelloWorld'
-  emailRecipients: 'yohaycasoy@gmail.com'
+  # emailRecipients: 'yohaycasoy@gmail.com'
 
 steps:
 - checkout: self
