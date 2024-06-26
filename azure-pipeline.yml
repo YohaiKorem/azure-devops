@@ -66,7 +66,8 @@ steps:
     publishWebProjects: false
   displayName: 'Publish'
   
-
+- script: ls
+  displayName: list files
 - task: NuGetCommand@2
   inputs:
     command: 'push'
