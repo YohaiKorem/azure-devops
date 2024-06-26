@@ -83,7 +83,6 @@ steps:
     versioningScheme: 'byEnvVar'
     versionEnvVar: 'NewVersion'
   displayName: 'Create NuGet Package'
-
 - task: PublishBuildArtifacts@1
   inputs:
     PathtoPublish: '$(System.DefaultWorkingDirectory)/HelloWorldApp/bin/$(buildConfiguration)'
