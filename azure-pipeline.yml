@@ -17,7 +17,7 @@ steps:
   persistCredentials: true
 
 - script: |
-    git checkout -b new-feature-branch
+    git checkout -b new-feature-branch || git checkout new-feature-branch
     git push origin new-feature-branch
     echo $(variables['Build.SourceBranch'], 'refs/heads/new-feature-branch')
   displayName: 'Create New Branch'
