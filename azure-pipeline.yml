@@ -1,5 +1,6 @@
 trigger:
 - master
+- new-feature-branch
 
 pool:
   name: 'Default'
