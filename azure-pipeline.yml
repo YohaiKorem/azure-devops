@@ -59,6 +59,7 @@ steps:
     SonarQube: 'sonar'
     scannerMode: 'MSBuild'
     projectKey: 'HelloWorld'
+    path: HelloWorldApp
   displayName: 'Prepare SonarQube Analysis'
 
 - task: DotNetCoreCLI@2
