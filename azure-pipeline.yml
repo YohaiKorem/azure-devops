@@ -69,10 +69,10 @@ steps:
     arguments: '--configuration $(buildConfiguration) --verbosity detailed /p:Version=$(NewVersion)'
   displayName: 'Build'
 
-- task: SonarQubeAnalyze@5
+- task: SonarQubeAnalyze@6
   displayName: 'Run SonarQube Analysis'
 
-- task: SonarQubePublish@5
+- task: SonarQubePublish@6
   inputs:
     pollingTimeoutSec: '300'
   displayName: 'Publish Quality Gate Result'
