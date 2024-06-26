@@ -65,8 +65,6 @@ steps:
     projects: '**/*.csproj'
     arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory) --verbosity detailed '
     publishWebProjects: false
-    versioningScheme: byEnvVar
-    versionEnvVar: NewVersion
   displayName: 'Publish'
   
 - script: ls && ls HelloWorldApp
@@ -76,6 +74,8 @@ steps:
     command: 'push'
     packagesToPush: '$(System.DefaultWorkingDirectory)/HelloWorldApp/*.nupkg'
     publishVstsFeed: 'yohaikoremoxxDD'
+    versioningScheme: byEnvVar
+    versionEnvVar: NewVersion
   displayName: 'Nuget push'
 
 - script: echo Build and publish completed successfully.
