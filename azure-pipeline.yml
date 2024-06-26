@@ -20,7 +20,7 @@ steps:
   inputs:
     command: 'restore'
     projects: '**/*.csproj'
-    
+
 - script: |
     commit_message=$(git log -1 --pretty=%B)
     version_bump=$(bash commit_message_regex.sh "$commit_message")
@@ -63,8 +63,10 @@ steps:
   inputs:
     command: 'publish'
     projects: '**/*.csproj'
-    arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory) --verbosity detailed /p:Version=$(NewVersion)'
+    arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory) --verbosity detailed '
     publishWebProjects: false
+    versioningScheme: byEnvVar
+    versionEnvVar: NewVersion
   displayName: 'Publish'
   
 - script: ls && ls HelloWorldApp
