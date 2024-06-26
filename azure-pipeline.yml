@@ -12,14 +12,13 @@ variables:
   minor: 0
   patch: $[counter(variables['major'], 0)]
   build: $(Build.BuildId)
+  buildConfiguration: 'Release'
+  sonarQubeProjectKey: 'HelloWorld'
+  emailRecipients: 'yohaycasoy@gmail.com'
 
 steps:
 - checkout: self
   persistCredentials: true
-- task: DotNetCoreCLI@2
-  inputs:
-    command: 'restore'
-    projects: '**/*.csproj'
 
 - script: |
     commit_message=$(git log -1 --pretty=%B)
@@ -50,33 +49,60 @@ steps:
 - script: cat $(pathToProjectFile)
   displayName: 'Display App Version'
 
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'restore'
+    projects: '**/*.csproj'
 
+- task: SonarQubePrepare@5
+  inputs:
+    SonarQube: 'sonar'  
+    scannerMode: 'MSBuild'
+    configMode: 'manual'
+    projectKey: $(sonarQubeProjectKey)
+    projectName: 'HelloWorldApp'
+    projectVersion: $(NewVersion)
+  displayName: 'Prepare SonarQube Analysis'
 
 - task: DotNetCoreCLI@2
   inputs:
     command: 'build'
     projects: '**/*.csproj'
-    arguments: '--configuration $(BuildConfiguration) --verbosity detailed /p:Version=$(NewVersion) '
+    arguments: '--configuration $(buildConfiguration) --verbosity detailed /p:Version=$(NewVersion)'
   displayName: 'Build'
+
+- task: SonarQubeAnalyze@5
+  displayName: 'Run SonarQube Analysis'
+
+- task: SonarQubePublish@5
+  inputs:
+    pollingTimeoutSec: '300'
+  displayName: 'Publish Quality Gate Result'
 
 - task: DotNetCoreCLI@2
   inputs:
-    command: 'publish'
-    projects: '**/*.csproj'
-    arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory) --verbosity detailed /p:Version=$(NewVersion)'
-    publishWebProjects: false
-  displayName: 'Publish'
-  
-- script: ls && ls HelloWorldApp
-  displayName: list files
-- task: NuGetCommand@2
-  inputs:
-    command: 'push'
-    packagesToPush: '$(System.DefaultWorkingDirectory)/HelloWorldApp/*.nupkg'
-    publishVstsFeed: 'yohaikoremoxxDD'
-    versioningScheme: byEnvVar
-    versionEnvVar: NewVersion
-  displayName: 'Nuget push'
+    command: 'pack'
+    packagesToPush: '$(System.DefaultWorkingDirectory)/HelloWorldApp/bin/$(buildConfiguration)/*.nupkg'
+    versioningScheme: 'byEnvVar'
+    versionEnvVar: 'NewVersion'
+  displayName: 'Create NuGet Package'
 
-- script: echo Build and publish completed successfully.
-  displayName: 'Confirmation Message'
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(System.DefaultWorkingDirectory)/HelloWorldApp/bin/$(buildConfiguration)'
+    ArtifactName: '$(Build.SourceBranchName)_$(NewVersion)'
+  displayName: 'Publish Artifact'
+
+- script: |
+    echo "Artifact: $(Build.SourceBranchName)_$(NewVersion)"
+  displayName: 'Print Artifact Name'
+
+- task: SendEmail@1
+  inputs:
+    to: 'your_email@example.com'
+    subject: 'Pipeline Status'
+    body: |
+      Pipeline completed with status: $(Build.Status)
+      Version: $(NewVersion)
+    isHtml: false
+  displayName: 'Send Email Notification'
