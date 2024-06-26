@@ -21,6 +21,7 @@ steps:
     git push origin new-feature-branch
     echo "Build Source Branch: $BUILD_SOURCEBRANCH"
     echo "Expected Branch: refs/heads/new-feature-branch"
+    echo "$(git rev-parse --abbrev-ref HEAD)"
   displayName: 'Create New Branch'
 
 
