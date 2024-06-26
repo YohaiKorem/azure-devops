@@ -16,7 +16,11 @@ variables:
 steps:
 - checkout: self
   persistCredentials: true
-
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'restore'
+    projects: '**/*.csproj'
+    
 - script: |
     commit_message=$(git log -1 --pretty=%B)
     version_bump=$(bash commit_message_regex.sh "$commit_message")
@@ -46,10 +50,7 @@ steps:
 - script: cat $(pathToProjectFile)
   displayName: 'Display App Version'
 
-- task: DotNetCoreCLI@2
-  inputs:
-    command: 'restore'
-    projects: '**/*.csproj'
+
 
 - task: DotNetCoreCLI@2
   inputs:
