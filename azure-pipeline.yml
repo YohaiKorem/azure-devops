@@ -8,73 +8,49 @@ pool:
 
 variables:
   pathToProjectFile: '$(System.DefaultWorkingDirectory)/HelloWorldApp/HelloWorldApp.csproj'
-  major: 1
-  minor: 0
-  patch: $[counter(variables['major'], 0)]
-  build: $(Build.BuildId)
   buildConfiguration: 'Release'
   sonarQubeProjectKey: 'HelloWorld'
-  # emailRecipients: 'yohaycasoy@gmail.com'
 
 steps:
 - checkout: self
   persistCredentials: true
 
 - script: |
-    commit_message=$(git log -1 --pretty=%B)
-    version_bump=$(bash commit_message_regex.sh "$commit_message")
-    if [[ $version_bump == "Error: No matching pattern" ]]; then
-        echo "##vso[task.logissue type=error]$version_bump"
-        exit 1
-    fi
-    echo "##vso[task.setvariable variable=VersionBump]$version_bump"
-  displayName: 'Determine Version Bump'
-
-- script: |
-    VERSION=$(cat version.txt)
-    NEW_VERSION=$(python3 increment_version.py $VERSION $(VersionBump))
-    echo $NEW_VERSION > version.txt
-    git checkout master  
-    git add version.txt
-    git commit -m "Increment version to $NEW_VERSION"
-    git push origin master  # Change this to 'main' if your default branch is 'main'
-    echo "##vso[task.setvariable variable=NewVersion]$NEW_VERSION"
-  displayName: 'Increment Version'
-
-- script: |
-    echo "$(NewVersion)"
-    sed -i 's/<Version>.*<\/Version>/<Version>$(NewVersion)<\/Version>/' $(pathToProjectFile)
-  displayName: 'Set App Version'
-
-- script: cat $(pathToProjectFile)
-  displayName: 'Display App Version'
-
-- task: DotNetCoreCLI@2
-  inputs:
-    command: 'restore'
-    projects: '**/*.csproj'
+    git checkout -b new-feature-branch
+    git push origin new-feature-branch
+  displayName: 'Create New Branch'
 
 - task: SonarQubePrepare@6
   inputs:
     SonarQube: 'sonar'
     scannerMode: 'MSBuild'
-    projectKey: 'HelloWorld'
-    path: HelloWorldApp
+    projectKey: '$(sonarQubeProjectKey)'
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/new-feature-branch'))
   displayName: 'Prepare SonarQube Analysis'
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'restore'
+    projects: '**/*.csproj'
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/new-feature-branch'))
+  displayName: 'Restore NuGet Packages'
 
 - task: DotNetCoreCLI@2
   inputs:
     command: 'build'
     projects: '**/*.csproj'
-    arguments: '--configuration $(buildConfiguration) --verbosity detailed /p:Version=$(NewVersion)'
-  displayName: 'Build'
+    arguments: '--configuration $(buildConfiguration) --verbosity detailed'
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/new-feature-branch'))
+  displayName: 'Build Project'
 
 - task: SonarQubeAnalyze@6
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/new-feature-branch'))
   displayName: 'Run SonarQube Analysis'
 
 - task: SonarQubePublish@6
   inputs:
     pollingTimeoutSec: '300'
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/new-feature-branch'))
   displayName: 'Publish Quality Gate Result'
 
 - task: DotNetCoreCLI@2
@@ -82,14 +58,29 @@ steps:
     command: 'pack'
     packagesToPush: '$(System.DefaultWorkingDirectory)/HelloWorldApp/bin/$(buildConfiguration)/*.nupkg'
     versioningScheme: 'byEnvVar'
-    versionEnvVar: 'NewVersion'
+    versionEnvVar: 'Build.BuildId'
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/new-feature-branch'))
   displayName: 'Create NuGet Package'
+
 - task: PublishBuildArtifacts@1
   inputs:
     PathtoPublish: '$(System.DefaultWorkingDirectory)/HelloWorldApp/bin/$(buildConfiguration)'
-    ArtifactName: '$(Build.SourceBranchName)_$(NewVersion)'
+    ArtifactName: '$(Build.SourceBranchName)_$(Build.BuildId)'
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/new-feature-branch'))
   displayName: 'Publish Artifact'
 
 - script: |
-    echo "Artifact: $(Build.SourceBranchName)_$(NewVersion)"
+    echo "Artifact: $(Build.SourceBranchName)_$(Build.BuildId)"
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/new-feature-branch'))
   displayName: 'Print Artifact Name'
+
+
+- task: SendEmail@1
+  inputs:
+    To: 'yohaycasoy@gmail.com'
+    From: 'yohaycasoy@gmail.com'
+    Subject: 'Build $(Build.BuildId) Status'
+    Body: 'The build and analysis for branch $(Build.SourceBranchName) has completed with status $(Build.Status).'
+    BodyAsHtml: false
+    AddAttachment: false
+    UseSSL: false
