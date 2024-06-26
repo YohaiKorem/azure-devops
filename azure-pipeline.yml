@@ -21,23 +21,23 @@ steps:
     git push origin new-feature-branch
     echo "Build Source Branch: $BUILD_SOURCEBRANCH"
     echo "Expected Branch: refs/heads/new-feature-branch"
-    echo "$(git rev-parse --abbrev-ref HEAD)"
+    CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+    echo "##vso[task.setvariable variable=currentBranch]$CURRENT_BRANCH"
   displayName: 'Create New Branch'
-
 
 - task: SonarQubePrepare@6
   inputs:
     SonarQube: 'sonar'
     scannerMode: 'MSBuild'
     projectKey: '$(sonarQubeProjectKey)'
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/new-feature-branch'))
+  condition: and(succeeded(), eq(variables['currentBranch'], 'new-feature-branch'))
   displayName: 'Prepare SonarQube Analysis'
 
 - task: DotNetCoreCLI@2
   inputs:
     command: 'restore'
     projects: '**/*.csproj'
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/new-feature-branch'))
+  condition: and(succeeded(), eq(variables['currentBranch'], 'new-feature-branch'))
   displayName: 'Restore NuGet Packages'
 
 - task: DotNetCoreCLI@2
@@ -45,17 +45,17 @@ steps:
     command: 'build'
     projects: '**/*.csproj'
     arguments: '--configuration $(buildConfiguration) --verbosity detailed'
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/new-feature-branch'))
+  condition: and(succeeded(), eq(variables['currentBranch'], 'new-feature-branch'))
   displayName: 'Build Project'
 
 - task: SonarQubeAnalyze@6
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/new-feature-branch'))
+  condition: and(succeeded(), eq(variables['currentBranch'], 'new-feature-branch'))
   displayName: 'Run SonarQube Analysis'
 
 - task: SonarQubePublish@6
   inputs:
     pollingTimeoutSec: '300'
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/new-feature-branch'))
+  condition: and(succeeded(), eq(variables['currentBranch'], 'new-feature-branch'))
   displayName: 'Publish Quality Gate Result'
 
 - task: DotNetCoreCLI@2
@@ -64,21 +64,20 @@ steps:
     packagesToPush: '$(System.DefaultWorkingDirectory)/HelloWorldApp/bin/$(buildConfiguration)/*.nupkg'
     versioningScheme: 'byEnvVar'
     versionEnvVar: 'Build.BuildId'
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/new-feature-branch'))
+  condition: and(succeeded(), eq(variables['currentBranch'], 'new-feature-branch'))
   displayName: 'Create NuGet Package'
 
 - task: PublishBuildArtifacts@1
   inputs:
     PathtoPublish: '$(System.DefaultWorkingDirectory)/HelloWorldApp/bin/$(buildConfiguration)'
     ArtifactName: '$(Build.SourceBranchName)_$(Build.BuildId)'
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/new-feature-branch'))
+  condition: and(succeeded(), eq(variables['currentBranch'], 'new-feature-branch'))
   displayName: 'Publish Artifact'
 
 - script: |
     echo "Artifact: $(Build.SourceBranchName)_$(Build.BuildId)"
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/new-feature-branch'))
+  condition: and(succeeded(), eq(variables['currentBranch'], 'new-feature-branch'))
   displayName: 'Print Artifact Name'
-
 
 - task: SendEmail@1
   inputs:
