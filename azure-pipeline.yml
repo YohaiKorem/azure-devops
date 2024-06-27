@@ -64,7 +64,7 @@ steps:
     command: 'pack'
     packagesToPush: '$(System.DefaultWorkingDirectory)/HelloWorldApp/bin/$(buildConfiguration)/*.nupkg'
     versioningScheme: 'byEnvVar'
-    versionEnvVar: 'Build.BuildId'
+    versionEnvVar: 'NewVersion'
   condition: and(succeeded(), eq(variables['currentBranch'], 'new-feature-branch'))
   displayName: 'Create NuGet Package'
 
