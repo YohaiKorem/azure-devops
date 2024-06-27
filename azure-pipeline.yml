@@ -99,7 +99,7 @@ steps:
 - script: |
     echo "$(NewVersion)" > version.txt
     git add version.txt
-    git commit -m "Changed file version"
+    git commit -m "Changed file version to $(NewVersion)"
     git push origin master
     git push origin new-feature-branch
 
