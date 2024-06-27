@@ -91,14 +91,14 @@ steps:
     command: 'push'
     packagesToPush: '$(Pipeline.Workspace)/drop/*.nupkg'
     publishVstsFeed: 'yohaikoremoxxDD'
-  condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'new-feature-branch'))
+  condition: and(succeeded(), eq(variables['currentBranch'], 'new-feature-branch'))
   displayName: 'Push NuGet package'
 
 - task: PublishBuildArtifacts@1
   inputs:
     PathtoPublish: '$(System.DefaultWorkingDirectory)/HelloWorldApp/bin/$(buildConfiguration)'
     ArtifactName: '$(Build.SourceBranchName)_$(Build.BuildId)'
-  condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'new-feature-branch'))
+  condition: and(succeeded(), eq(variables['currentBranch'], 'new-feature-branch'))
   displayName: 'Publish Artifact'
 
 
