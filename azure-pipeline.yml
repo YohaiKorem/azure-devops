@@ -101,7 +101,9 @@ steps:
     echo "$(NewVersion)" > version.txt
     git add version.txt
     git commit -m "Changed file version"
-    git push
+    git push origin master
+    git push origin new-feature-branch
+
   condition: and(succeeded(), eq(variables['currentBranch'], 'new-feature-branch'))
   displayName: 'Commit new version'
 
