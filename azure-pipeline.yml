@@ -101,7 +101,6 @@ steps:
   condition: and(succeeded(), eq(variables['currentBranch'], 'new-feature-branch'))
   displayName: 'Publish Artifact'
 
-
 - script: |
     echo "Artifact: $(Build.SourceBranchName)_$(Build.BuildId)"
     echo "version: $(NewVersion)"
