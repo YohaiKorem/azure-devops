@@ -63,7 +63,7 @@ steps:
   inputs:
     command: 'build'
     projects: '**/*.csproj'
-    arguments: '--configuration $(buildConfiguration) --verbosity detailed -p:Version=$(NewVersion)'
+    arguments: '--configuration $(buildConfiguration) --verbosity detailed /p:Version=$(NewVersion)'
   condition: and(succeeded(), eq(variables['currentBranch'], 'new-feature-branch'))
   displayName: 'Build Project'
 
