@@ -93,7 +93,6 @@ steps:
     publishVstsFeed: 'yohaikoremoxxDD'
   condition: and(succeeded(), eq(variables['currentBranch'], 'new-feature-branch'))
   displayName: 'Push NuGet package'
-
 - task: PublishBuildArtifacts@1
   inputs:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
