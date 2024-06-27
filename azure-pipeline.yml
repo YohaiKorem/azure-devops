@@ -86,13 +86,6 @@ steps:
   condition: and(succeeded(), eq(variables['currentBranch'], 'new-feature-branch'))
   displayName: 'Create NuGet Package'
 
-- task: NuGetCommand@2
-  inputs:
-    command: 'push'
-    packagesToPush: '$(Pipeline.Workspace)/drop/*.nupkg'
-    publishVstsFeed: 'yohaikoremoxxDD'
-  condition: and(succeeded(), eq(variables['currentBranch'], 'new-feature-branch'))
-  displayName: 'Push NuGet package'
 
 - task: PublishBuildArtifacts@1
   inputs:
@@ -101,6 +94,13 @@ steps:
   condition: and(succeeded(), eq(variables['currentBranch'], 'new-feature-branch'))
   displayName: 'Publish Artifact'
 
+- task: NuGetCommand@2
+  inputs:
+    command: 'push'
+    packagesToPush: '$(Pipeline.Workspace)/drop/*.nupkg'
+    publishVstsFeed: 'yohaikoremoxxDD'
+  condition: and(succeeded(), eq(variables['currentBranch'], 'new-feature-branch'))
+  displayName: 'Push NuGet package'
 
 - script: |
     echo "Artifact: $(Build.SourceBranchName)_$(Build.BuildId)"
