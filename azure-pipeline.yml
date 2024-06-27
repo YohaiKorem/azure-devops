@@ -33,7 +33,7 @@ steps:
     bump_type=$(bash commit_message_regex.sh "$commit_message")
 
     # Fetch the current version from the project file
-    current_version=$(grep -oP '(?<=<Version>).*?(?=</Version>)' $(pathToProjectFile))
+    current_version=$(cat version.txt)' $(pathToProjectFile))
 
     # Use the bump type to increment the version
     new_version=$(python3 increment_version.py "$current_version" "$bump_type")
