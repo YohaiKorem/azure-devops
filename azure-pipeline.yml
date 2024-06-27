@@ -86,14 +86,6 @@ steps:
   condition: and(succeeded(), eq(variables['currentBranch'], 'new-feature-branch'))
   displayName: 'Create NuGet Package'
 
-
-- task: PublishBuildArtifacts@1
-  inputs:
-    PathtoPublish: '$(System.DefaultWorkingDirectory)/HelloWorldApp/bin/$(buildConfiguration)'
-    ArtifactName: '$(Build.SourceBranchName)_$(Build.BuildId)'
-  condition: and(succeeded(), eq(variables['currentBranch'], 'new-feature-branch'))
-  displayName: 'Publish Artifact'
-
 - task: NuGetCommand@2
   inputs:
     command: 'push'
@@ -101,6 +93,14 @@ steps:
     publishVstsFeed: 'yohaikoremoxxDD'
   condition: and(succeeded(), eq(variables['currentBranch'], 'new-feature-branch'))
   displayName: 'Push NuGet package'
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: '$(Build.SourceBranchName)_$(Build.BuildId)'
+  condition: and(succeeded(), eq(variables['currentBranch'], 'new-feature-branch'))
+  displayName: 'Publish Artifact'
+
 
 - script: |
     echo "Artifact: $(Build.SourceBranchName)_$(Build.BuildId)"
