@@ -93,6 +93,8 @@ steps:
 
 - script: |
     echo "Artifact: $(Build.SourceBranchName)_$(Build.BuildId)"
+    echo "version: $(NewVersion)"
+
   condition: and(succeeded(), eq(variables['currentBranch'], 'new-feature-branch'))
   displayName: 'Print Artifact Name'
 
