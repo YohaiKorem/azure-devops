@@ -108,4 +108,3 @@ steps:
 
   condition: and(succeeded(), eq(variables['currentBranch'], 'new-feature-branch'))
   displayName: 'Print Artifact Name'
-
