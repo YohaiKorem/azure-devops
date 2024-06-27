@@ -97,7 +97,6 @@ steps:
   displayName: 'Print Artifact Name'
 
 - script: |
-    git checkout master
     echo "$(NewVersion)" > version.txt
     git add version.txt
     git commit -m "Changed file version"
