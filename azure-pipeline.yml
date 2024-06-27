@@ -49,6 +49,22 @@ steps:
   condition: and(succeeded(), eq(variables['currentBranch'], 'new-feature-branch'))
   displayName: 'Build Project'
 
+- script: |
+    # Check the commit message to determine the version bump
+    commit_message=$(git log -1 --pretty=%B)
+    bump_type=$(bash commit_message_regex.sh "$commit_message")
+
+    # Fetch the current version from the project file
+    current_version=$(grep -oP '(?<=<Version>).*?(?=</Version>)' $(pathToProjectFile))
+
+    # Use the bump type to increment the version
+    new_version=$(python increment_version.py "$current_version" "$bump_type")
+
+    # Set the new version as a pipeline variable
+    echo "##vso[task.setvariable variable=NewVersion]$new_version"
+  displayName: 'Determine and Increment Version'
+  condition: and(succeeded(), eq(variables['currentBranch'], 'new-feature-branch'))
+
 - task: SonarQubeAnalyze@6
   condition: and(succeeded(), eq(variables['currentBranch'], 'new-feature-branch'))
   displayName: 'Run SonarQube Analysis'
